@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>20以内加法小游戏 - 第二关</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 800px;
+            width: 95%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .level-indicator {
+            background: linear-gradient(145deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            color: #555;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 107, 107, 0.2);
+        }
+
+        .question-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
+            font-size: 2.5em;
+            color: #333;
+            font-weight: bold;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-part {
+            font-size: 2.5em;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .input-container {
+            margin: 30px 0;
+        }
+
+        input[type="number"] {
+            font-size: 2.5em;
+            padding: 10px 15px;
+            border: 3px solid #ff6b6b;
+            border-radius: 15px;
+            text-align: center;
+            width: 160px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #f8f9fa, #ffffff);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="number"]:focus {
+            border-color: #ee5a24;
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            transform: scale(1.05);
+        }
+
+        .btn {
+            background: linear-gradient(145deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.4em;
+            border-radius: 15px;
+            cursor: pointer;
+            margin: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(255, 107, 107, 0.4);
+            background: linear-gradient(145deg, #e55656, #d63031);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 6px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .stars {
+            margin: 30px 0;
+            font-size: 3em;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .star {
+            color: #ffd700;
+            margin: 0 8px;
+            display: inline-block;
+            transform: scale(0);
+            transition: transform 0.5s ease;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+        }
+
+        .star.earned {
+            transform: scale(1);
+            animation: starPop 0.6s ease;
+        }
+
+        @keyframes starPop {
+            0% { transform: scale(0) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+
+        .feedback {
+            font-size: 1.8em;
+            margin: 30px 0;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .correct {
+            color: #27ae60;
+            animation: bounce 0.5s ease;
+        }
+
+        .incorrect {
+            color: #e74c3c;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .game-over {
+            margin: 20px 0;
+            font-size: 1.3em;
+            color: #333;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .start-screen {
+            text-align: center;
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            color: #555;
+            line-height: 1.8;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 107, 107, 0.2);
+        }
+
+        .instructions h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .instructions ul {
+            text-align: left;
+            margin: 0 auto;
+            display: inline-block;
+            font-size: 1.2em;
+        }
+
+        .instructions li {
+            margin: 12px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 107, 107, 0.1);
+        }
+
+        .instructions li:last-child {
+            border-bottom: none;
+        }
+
+        /* 数字小键盘样式 */
+        .keypad {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            display: none;
+        }
+
+        .keypad.show {
+            display: block;
+        }
+
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 180px;
+        }
+
+        .keypad-btn {
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            user-select: none;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .keypad-btn:hover {
+            background: linear-gradient(145deg, #e9ecef, #dee2e6);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .keypad-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .keypad-btn.enter {
+            background: linear-gradient(145deg, #ff6b6b, #ee5a24);
+            color: white;
+            grid-column: span 3;
+            font-size: 1.2em;
+        }
+
+        .keypad-btn.enter:hover {
+            background: linear-gradient(145deg, #e55656, #d63031);
+        }
+
+        .keypad-btn.clear {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .keypad-btn.clear:hover {
+            background: linear-gradient(145deg, #c0392b, #a93226);
+        }
+
+        .keypad-btn.zero {
+            grid-column: span 2;
+        }
+
+        .navigation {
+            margin: 20px 0;
+        }
+
+        .nav-btn {
+            background: linear-gradient(145deg, #74b9ff, #0984e3);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(116, 185, 255, 0.3);
+        }
+
+        /* 答题结果显示样式 */
+        .results-panel {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            width: 300px;
+            max-height: 70vh;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .results-panel.show {
+            display: block;
+        }
+
+        .results-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 10px;
+            font-size: 1.1em;
+            border: 1px solid #e0e0e0;
+        }
+
+        .result-item.correct {
+            background: rgba(39, 174, 96, 0.1);
+            border-color: #27ae60;
+        }
+
+        .result-item.incorrect {
+            background: rgba(231, 76, 60, 0.1);
+            border-color: #e74c3c;
+        }
+
+        .result-question {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .result-answer {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .result-user-answer {
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .result-item.correct .result-user-answer {
+            background: #27ae60;
+            color: white;
+        }
+
+        .result-item.incorrect .result-user-answer {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .result-correct-answer {
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .results-stats {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .stats-item {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+
+        .stats-correct {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .stats-incorrect {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎯 20以内加法小游戏</h1>
+        <div class="level-indicator">第三关 - 进位加法</div>
+        
+        <!-- 开始界面 -->
+        <div id="startScreen" class="start-screen">
+            <div class="instructions">
+                <h3>🎮 游戏规则</h3>
+                <ul>
+                    <li>⏰ 60秒时间限制</li>
+                    <li>⭐ 10题=1星，15题=2星，20题=3星，25题=4星</li>
+                    <li>🧮 专练个位数相加大于10的进位题目</li>
+                    <li>⚡ 挑战更高难度的20以内加法</li>
+                </ul>
+            </div>
+            <button class="btn" onclick="startGame()">🚀 开始游戏</button>
+            
+            <div class="navigation">
+                <a href="subtraction.html" class="nav-btn">← 第二关</a>
+            </div>
+        </div>
+
+        <!-- 游戏界面 -->
+        <div id="gameScreen" class="hidden">
+            <div class="game-info">
+                <div class="timer">⏰ 时间: <span id="timeLeft">60</span>秒</div>
+                <div class="score">✅ 答对: <span id="correctCount">0</span>题</div>
+            </div>
+
+            <div class="question-container" id="questionContainer">
+                <span class="question-part" id="num1">12</span>
+                <span class="question-part"> + </span>
+                <span class="question-part" id="num2">9</span>
+                <span class="question-part"> = </span>
+                <input type="number" id="answerInput" placeholder="?" min="0" max="20">
+            </div>
+
+            <div class="input-container">
+                <button class="btn" onclick="submitAnswer()">提交答案 ✓</button>
+            </div>
+
+            <div class="feedback" id="feedback"></div>
+
+            <div class="stars" id="stars">
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+            </div>
+        </div>
+
+        <!-- 结束界面 -->
+        <div id="endScreen" class="hidden">
+            <div class="game-over">
+                <h2 id="gameResult">游戏结束!</h2>
+                <p id="finalScore">最终得分: 0题正确</p>
+                <div class="stars" id="finalStars"></div>
+            </div>
+            <button class="btn" onclick="restartGame()">🔄 再玩一次</button>
+            
+            <div class="navigation">
+                <a href="subtraction.html" class="nav-btn">← 第二关</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 答题结果面板 -->
+    <div class="results-panel" id="resultsPanel">
+        <div class="results-title">📊 答题结果</div>
+        <div id="resultsList"></div>
+        <div class="results-stats">
+            <div class="stats-item">总题数: <span id="totalQuestions">0</span></div>
+            <div class="stats-item stats-correct">答对: <span id="correctAnswers">0</span></div>
+            <div class="stats-item stats-incorrect">答错: <span id="incorrectAnswers">0</span></div>
+            <div class="stats-item">正确率: <span id="accuracyRate">0%</span></div>
+        </div>
+    </div>
+
+    <!-- 数字小键盘 -->
+    <div class="keypad" id="keypad">
+        <div class="keypad-grid">
+            <div class="keypad-btn" onclick="inputNumber(7)">7</div>
+            <div class="keypad-btn" onclick="inputNumber(8)">8</div>
+            <div class="keypad-btn" onclick="inputNumber(9)">9</div>
+            <div class="keypad-btn" onclick="inputNumber(4)">4</div>
+            <div class="keypad-btn" onclick="inputNumber(5)">5</div>
+            <div class="keypad-btn" onclick="inputNumber(6)">6</div>
+            <div class="keypad-btn" onclick="inputNumber(1)">1</div>
+            <div class="keypad-btn" onclick="inputNumber(2)">2</div>
+            <div class="keypad-btn" onclick="inputNumber(3)">3</div>
+            <div class="keypad-btn zero" onclick="inputNumber(0)">0</div>
+            <div class="keypad-btn clear" onclick="clearInput()">清除</div>
+            <div class="keypad-btn enter" onclick="submitAnswer()">✓ 确认</div>
+        </div>
+    </div>
+
+    <script>
+        class MathGameLevel2 {
+            constructor() {
+                this.timeLeft = 60;
+                this.correctCount = 0;
+                this.currentAnswer = 0;
+                this.timer = null;
+                this.gameActive = false;
+                this.starsEarned = 0;
+                this.questionBank = [];
+                this.currentQuestionIndex = 0;
+                this.answerHistory = []; // 存储答题历史
+                this.initQuestionBank();
+            }
+
+            // 初始化题库 - 20以内个位数相加大于10的题目
+            initQuestionBank() {
+                this.questionBank = [];
+                
+                // 生成所有个位数相加大于10的20以内加法题目
+                for (let num1 = 1; num1 <= 19; num1++) {
+                    for (let num2 = 1; num2 <= 19; num2++) {
+                        const sum = num1 + num2;
+                        const digit1 = num1 % 10;  // 个位数
+                        const digit2 = num2 % 10;  // 个位数
+                        
+                        // 条件：和不超过20，且个位数相加大于10（需要进位）
+                        if (sum <= 20 && digit1 + digit2 > 10) {
+                            this.questionBank.push({
+                                num1: num1,
+                                num2: num2,
+                                answer: sum
+                            });
+                        }
+                    }
+                }
+            }
+
+            // 随机打乱题库
+            shuffleQuestions() {
+                for (let i = this.questionBank.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.questionBank[i], this.questionBank[j]] = [this.questionBank[j], this.questionBank[i]];
+                }
+                this.currentQuestionIndex = 0;
+            }
+
+            // 从题库中获取下一个题目
+            generateQuestion() {
+                // 如果题库用完了，重新打乱
+                if (this.currentQuestionIndex >= this.questionBank.length) {
+                    this.shuffleQuestions();
+                }
+
+                const question = this.questionBank[this.currentQuestionIndex];
+                this.currentAnswer = question.answer;
+                document.getElementById('num1').textContent = question.num1;
+                document.getElementById('num2').textContent = question.num2;
+                
+                this.currentQuestionIndex++;
+            }
+
+            // 开始游戏
+            startGame() {
+                this.timeLeft = 60;
+                this.correctCount = 0;
+                this.starsEarned = 0;
+                this.gameActive = true;
+                this.answerHistory = []; // 重置答题历史
+
+                // 打乱题库
+                this.shuffleQuestions();
+
+                // 显示游戏界面，隐藏结果面板
+                document.getElementById('startScreen').classList.add('hidden');
+                document.getElementById('gameScreen').classList.remove('hidden');
+                document.getElementById('endScreen').classList.add('hidden');
+                document.getElementById('resultsPanel').classList.remove('show');
+
+                // 显示数字键盘
+                document.getElementById('keypad').classList.add('show');
+
+                // 重置显示
+                document.getElementById('timeLeft').textContent = this.timeLeft;
+                document.getElementById('correctCount').textContent = this.correctCount;
+                document.getElementById('feedback').textContent = '';
+                document.getElementById('answerInput').value = '';
+
+                // 重置星星
+                const stars = document.querySelectorAll('#stars .star');
+                stars.forEach(star => star.classList.remove('earned'));
+
+                // 生成第一个题目
+                this.generateQuestion();
+
+                // 启动计时器
+                this.startTimer();
+
+                // 聚焦输入框
+                document.getElementById('answerInput').focus();
+            }
+
+            // 启动计时器
+            startTimer() {
+                this.timer = setInterval(() => {
+                    this.timeLeft--;
+                    document.getElementById('timeLeft').textContent = this.timeLeft;
+
+                    if (this.timeLeft <= 0) {
+                        this.endGame();
+                    }
+                }, 1000);
+            }
+
+            // 提交答案
+            submitAnswer() {
+                if (!this.gameActive) return;
+
+                const userAnswer = parseInt(document.getElementById('answerInput').value);
+                const feedback = document.getElementById('feedback');
+
+                if (isNaN(userAnswer)) {
+                    feedback.textContent = '请输入一个数字！';
+                    feedback.className = 'feedback incorrect';
+                    return;
+                }
+
+                // 获取当前题目信息
+                const currentQuestion = this.questionBank[this.currentQuestionIndex - 1];
+                const isCorrect = userAnswer === this.currentAnswer;
+
+                // 记录答题历史
+                this.answerHistory.push({
+                    question: `${currentQuestion.num1} + ${currentQuestion.num2}`,
+                    correctAnswer: this.currentAnswer,
+                    userAnswer: userAnswer,
+                    isCorrect: isCorrect
+                });
+
+                if (isCorrect) {
+                    // 答对了
+                    this.correctCount++;
+                    feedback.textContent = '✅ 答对了！';
+                    feedback.className = 'feedback correct';
+                    
+                    document.getElementById('correctCount').textContent = this.correctCount;
+
+                    // 检查是否获得星星
+                    this.checkForStars();
+
+                    // 继续游戏直到时间结束
+                    setTimeout(() => {
+                        this.generateQuestion();
+                        document.getElementById('answerInput').value = '';
+                        document.getElementById('answerInput').focus();
+                        feedback.textContent = '';
+                    }, 1000);
+                } else {
+                    // 答错了
+                    feedback.textContent = `❌ 答错了！正确答案是 ${this.currentAnswer}`;
+                    feedback.className = 'feedback incorrect';
+                    
+                    // 1秒后生成下一个题目
+                    setTimeout(() => {
+                        this.generateQuestion();
+                        document.getElementById('answerInput').value = '';
+                        document.getElementById('answerInput').focus();
+                        feedback.textContent = '';
+                    }, 1500);
+                }
+            }
+
+            // 检查星星获得条件
+            checkForStars() {
+                const stars = document.querySelectorAll('#stars .star');
+                let newStars = 0;
+                
+                // 根据答题数量确定星星数
+                if (this.correctCount >= 25) {
+                    newStars = 4;
+                } else if (this.correctCount >= 20) {
+                    newStars = 3;
+                } else if (this.correctCount >= 15) {
+                    newStars = 2;
+                } else if (this.correctCount >= 10) {
+                    newStars = 1;
+                }
+
+                // 添加新获得的星星
+                while (this.starsEarned < newStars && this.starsEarned < stars.length) {
+                    stars[this.starsEarned].classList.add('earned');
+                    this.starsEarned++;
+                }
+            }
+
+            // 结束游戏
+            endGame() {
+                this.gameActive = false;
+                clearInterval(this.timer);
+
+                // 隐藏数字键盘，显示结果面板
+                document.getElementById('keypad').classList.remove('show');
+                document.getElementById('resultsPanel').classList.add('show');
+
+                // 显示结束界面
+                document.getElementById('gameScreen').classList.add('hidden');
+                document.getElementById('endScreen').classList.remove('hidden');
+
+                // 显示答题结果
+                this.displayResults();
+
+                // 显示结果
+                const gameResult = document.getElementById('gameResult');
+                const finalScore = document.getElementById('finalScore');
+                const finalStars = document.getElementById('finalStars');
+
+                gameResult.textContent = '⏰ 时间到！';
+                if (this.starsEarned > 0) {
+                    gameResult.textContent = '🎉 恭喜你获得星星！';
+                    gameResult.style.color = '#27ae60';
+                } else {
+                    gameResult.style.color = '#e74c3c';
+                }
+
+                finalScore.textContent = `最终得分: ${this.correctCount}题正确`;
+
+                // 显示获得的星星
+                finalStars.innerHTML = '';
+                for (let i = 0; i < this.starsEarned; i++) {
+                    finalStars.innerHTML += '<span class="star earned">⭐</span>';
+                }
+            }
+
+            // 显示答题结果
+            displayResults() {
+                const resultsList = document.getElementById('resultsList');
+                const totalQuestions = document.getElementById('totalQuestions');
+                const correctAnswers = document.getElementById('correctAnswers');
+                const incorrectAnswers = document.getElementById('incorrectAnswers');
+                const accuracyRate = document.getElementById('accuracyRate');
+
+                // 清空之前的结果
+                resultsList.innerHTML = '';
+
+                // 显示每道题的结果
+                this.answerHistory.forEach((item, index) => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = `result-item ${item.isCorrect ? 'correct' : 'incorrect'}`;
+                    
+                    resultItem.innerHTML = `
+                        <div class="result-question">${index + 1}. ${item.question} = ?</div>
+                        <div class="result-answer">
+                            <span class="result-user-answer">${item.userAnswer}</span>
+                            ${!item.isCorrect ? `<span class="result-correct-answer">(${item.correctAnswer})</span>` : ''}
+                        </div>
+                    `;
+                    
+                    resultsList.appendChild(resultItem);
+                });
+
+                // 更新统计信息
+                const total = this.answerHistory.length;
+                const correct = this.answerHistory.filter(item => item.isCorrect).length;
+                const incorrect = total - correct;
+                const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+                totalQuestions.textContent = total;
+                correctAnswers.textContent = correct;
+                incorrectAnswers.textContent = incorrect;
+                accuracyRate.textContent = `${accuracy}%`;
+            }
+
+            // 重新开始游戏
+            restartGame() {
+                document.getElementById('endScreen').classList.add('hidden');
+                document.getElementById('startScreen').classList.remove('hidden');
+                document.getElementById('resultsPanel').classList.remove('show');
+            }
+        }
+
+        // 数字键盘功能
+        function inputNumber(num) {
+            if (!game.gameActive) return;
+            
+            const input = document.getElementById('answerInput');
+            const currentValue = input.value;
+            
+            // 限制最多输入2位数
+            if (currentValue.length < 2) {
+                input.value = currentValue + num;
+            }
+        }
+
+        function clearInput() {
+            if (!game.gameActive) return;
+            
+            document.getElementById('answerInput').value = '';
+        }
+
+        // 创建游戏实例
+        const game = new MathGameLevel2();
+
+        // 游戏控制函数
+        function startGame() {
+            game.startGame();
+        }
+
+        function submitAnswer() {
+            game.submitAnswer();
+        }
+
+        function restartGame() {
+            game.restartGame();
+        }
+
+        // 键盘事件监听
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && game.gameActive) {
+                submitAnswer();
+            }
+        });
+
+        // 页面加载完成后聚焦输入框
+        document.addEventListener('DOMContentLoaded', function() {
+            // 确保游戏从开始界面开始
+            document.getElementById('startScreen').classList.remove('hidden');
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('endScreen').classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
