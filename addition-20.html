@@ -750,48 +750,31 @@
 
             // 更新可视化图形
             updateVisualization(num1, num2) {
-                const visualContainer = document.getElementById('visualizationContainer');
                 const visualNum1 = document.getElementById('visualNum1');
                 const visualNum2 = document.getElementById('visualNum2');
+                const visualRow1 = document.getElementById('visualRow1');
+                const visualRow2 = document.getElementById('visualRow2');
 
                 visualNum1.textContent = num1;
                 visualNum2.textContent = num2;
 
-                // 清空所有可视化行（除了标签和分隔符）
-                const rows = visualContainer.querySelectorAll('.visual-row');
-                rows.forEach(row => row.remove());
+                // 清空之前的图形
+                visualRow1.innerHTML = '';
+                visualRow2.innerHTML = '';
 
-                // 创建第一个数的可视化区域
-                const row1Container = document.createElement('div');
-                row1Container.id = 'visualRow1';
-                row1Container.className = 'visual-row';
-                
-                // 生成第一个数的圆形图形（每行最多10个）
+                // 生成第一个数的圆形图形
                 for (let i = 0; i < num1; i++) {
                     const shape = document.createElement('div');
                     shape.className = 'shape-circle';
-                    row1Container.appendChild(shape);
+                    visualRow1.appendChild(shape);
                 }
-                
-                // 在第一个标签后插入
-                const label1 = visualContainer.querySelector('.visual-label');
-                label1.insertAdjacentElement('afterend', row1Container);
 
-                // 创建第二个数的可视化区域
-                const separator = visualContainer.querySelector('.visual-separator');
-                const row2Container = document.createElement('div');
-                row2Container.id = 'visualRow2';
-                row2Container.className = 'visual-row';
-                
-                // 生成第二个数的方形图形（每行最多10个）
+                // 生成第二个数的方形图形
                 for (let i = 0; i < num2; i++) {
                     const shape = document.createElement('div');
                     shape.className = 'shape-square';
-                    row2Container.appendChild(shape);
+                    visualRow2.appendChild(shape);
                 }
-                
-                // 在分隔符后插入
-                separator.insertAdjacentElement('afterend', row2Container);
             }
 
             // 开始游戏
