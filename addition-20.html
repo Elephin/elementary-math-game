@@ -749,22 +749,32 @@
                 const digit1 = num1 % 10;
                 const digit2 = num2 % 10;
 
-                // 第一行：显示第一个数的个位数（圆形）+ 从第二个数中取出的部分（方形），凑成10
+                // 确保较大的数字用圆形表示（放在前面）
+                let largerDigit, smallerDigit;
+                if (digit1 >= digit2) {
+                    largerDigit = digit1;  // 圆形
+                    smallerDigit = digit2; // 方形
+                } else {
+                    largerDigit = digit2;  // 圆形
+                    smallerDigit = digit1; // 方形
+                }
+
+                // 第一行：显示较大数的个位数（圆形）+ 从较小数中取出的部分（方形），凑成10
                 const row1 = document.createElement('div');
                 row1.className = 'visual-row';
 
-                // 第一个数的个位数（圆形）
-                for (let i = 0; i < digit1; i++) {
+                // 较大数的个位数（圆形）
+                for (let i = 0; i < largerDigit; i++) {
                     const shape = document.createElement('div');
                     shape.className = 'shape-circle';
                     row1.appendChild(shape);
                 }
 
-                // 从第二个数中取出凑成10的部分（方形）
-                const needFrom2 = 10 - digit1;
-                const takeFrom2 = Math.min(needFrom2, digit2);
+                // 从较小数中取出凑成10的部分（方形）
+                const needFromSmaller = 10 - largerDigit;
+                const takeFromSmaller = Math.min(needFromSmaller, smallerDigit);
                 
-                for (let i = 0; i < takeFrom2; i++) {
+                for (let i = 0; i < takeFromSmaller; i++) {
                     const shape = document.createElement('div');
                     shape.className = 'shape-square';
                     row1.appendChild(shape);
@@ -772,8 +782,8 @@
 
                 visualRows.appendChild(row1);
 
-                // 第二行：显示第二个数剩下的部分（方形）
-                const remaining = digit2 - takeFrom2;
+                // 第二行：显示较小数剩下的部分（方形）
+                const remaining = smallerDigit - takeFromSmaller;
                 if (remaining > 0) {
                     const row2 = document.createElement('div');
                     row2.className = 'visual-row';
