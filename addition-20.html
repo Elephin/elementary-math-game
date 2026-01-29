@@ -786,48 +786,6 @@
 
                     visualRows.appendChild(row2);
                 }
-
-                // 如果有十位数，显示十位数（在下方，用虚线分隔）
-                const tens1 = Math.floor(num1 / 10);
-                const tens2 = Math.floor(num2 / 10);
-                const totalTens = tens1 + tens2;
-                
-                // 如果第一行凑成了10，需要进位，显示进位后的十位数
-                if (digit1 + takeFrom2 === 10 && totalTens >= 0) {
-                    const rowTens = document.createElement('div');
-                    rowTens.className = 'visual-row';
-                    rowTens.style.marginTop = '10px';
-                    rowTens.style.paddingTop = '10px';
-                    rowTens.style.borderTop = '2px dashed #ccc';
-
-                    // 显示原有的十位数 + 进位1
-                    const finalTens = totalTens + 1;
-                    for (let i = 0; i < finalTens; i++) {
-                        const shape = document.createElement('div');
-                        shape.className = 'shape-circle';
-                        shape.style.opacity = '0.7';
-                        shape.style.border = '2px dashed #ff6b6b';
-                        rowTens.appendChild(shape);
-                    }
-
-                    visualRows.appendChild(rowTens);
-                } else if (totalTens > 0) {
-                    // 如果没有进位，但原有十位数
-                    const rowTens = document.createElement('div');
-                    rowTens.className = 'visual-row';
-                    rowTens.style.marginTop = '10px';
-                    rowTens.style.paddingTop = '10px';
-                    rowTens.style.borderTop = '2px dashed #ccc';
-
-                    for (let i = 0; i < totalTens; i++) {
-                        const shape = document.createElement('div');
-                        shape.className = 'shape-circle';
-                        shape.style.opacity = '0.7';
-                        rowTens.appendChild(shape);
-                    }
-
-                    visualRows.appendChild(rowTens);
-                }
             }
 
             // 开始游戏
