@@ -475,30 +475,27 @@
         }
 
         /* 可视化功能样式 */
-        .visualization-control {
+        .visual-option {
             margin: 20px 0;
-        }
-
-        .visual-toggle {
-            background: linear-gradient(145deg, #74b9ff, #0984e3);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1em;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.5);
             border-radius: 10px;
+        }
+
+        .visual-checkbox-label {
+            display: flex;
+            align-items: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(116, 185, 255, 0.3);
-            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+            user-select: none;
         }
 
-        .visual-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(116, 185, 255, 0.4);
-        }
-
-        .visual-toggle.active {
-            background: linear-gradient(145deg, #0984e3, #74b9ff);
+        .visual-checkbox-label input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
         }
 
         .visualization-container {
@@ -525,18 +522,19 @@
 
         .visual-row {
             display: flex;
-            flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 15px;
             justify-content: flex-start;
             align-items: center;
             min-height: 50px;
-            max-width: 100%;
+            flex-wrap: wrap;
         }
 
-        /* 确保每行最多显示10个图形 */
-        .visual-row > div:nth-child(11) {
-            margin-left: 0;
+        .visual-row-label {
+            font-size: 1em;
+            color: #666;
+            margin-right: 10px;
+            min-width: 80px;
         }
 
         .visual-separator {
@@ -590,6 +588,14 @@
                     <li>⚡ 挑战更高难度的20以内加法</li>
                 </ul>
             </div>
+            
+            <div class="visual-option">
+                <label class="visual-checkbox-label">
+                    <input type="checkbox" id="visualHelpCheckbox" checked>
+                    <span>🔢 显示图形帮助（用图形演示进位计算过程）</span>
+                </label>
+            </div>
+            
             <button class="btn" onclick="startGame()">🚀 开始游戏</button>
             
             <div class="navigation">
@@ -612,16 +618,9 @@
                 <input type="number" id="answerInput" placeholder="?" min="0" max="20">
             </div>
 
-            <div class="visualization-control">
-                <button class="visual-toggle" id="visualToggle" onclick="toggleVisualization()">🔢 显示图形帮助</button>
-            </div>
-
             <div class="visualization-container" id="visualizationContainer">
-                <div class="visual-label">第一个数：<span id="visualNum1">0</span></div>
-                <div class="visual-row" id="visualRow1"></div>
-                <div class="visual-separator"></div>
-                <div class="visual-label">第二个数：<span id="visualNum2">0</span></div>
-                <div class="visual-row" id="visualRow2"></div>
+                <div class="visual-label">进位计算过程：</div>
+                <div id="visualRows"></div>
             </div>
 
             <div class="input-container">
@@ -748,32 +747,147 @@
                 this.currentQuestionIndex++;
             }
 
-            // 更新可视化图形
+            // 更新可视化图形 - 模拟进位计算过程
             updateVisualization(num1, num2) {
-                const visualNum1 = document.getElementById('visualNum1');
-                const visualNum2 = document.getElementById('visualNum2');
-                const visualRow1 = document.getElementById('visualRow1');
-                const visualRow2 = document.getElementById('visualRow2');
+                const visualContainer = document.getElementById('visualizationContainer');
+                const visualRows = document.getElementById('visualRows');
+                
+                // 检查是否启用可视化
+                if (!this.showVisualization) {
+                    visualContainer.classList.remove('show');
+                    return;
+                }
+                
+                visualContainer.classList.add('show');
+                visualRows.innerHTML = '';
 
-                visualNum1.textContent = num1;
-                visualNum2.textContent = num2;
+                // 计算个位数
+                const digit1 = num1 % 10;
+                const digit2 = num2 % 10;
 
-                // 清空之前的图形
-                visualRow1.innerHTML = '';
-                visualRow2.innerHTML = '';
+                // 第一行：显示第一个数的个位数（圆形）+ 从第二个数中取出的部分（方形），凑成10
+                const row1 = document.createElement('div');
+                row1.className = 'visual-row';
+                
+                const label1 = document.createElement('span');
+                label1.className = 'visual-row-label';
+                label1.textContent = '第一行：';
+                row1.appendChild(label1);
 
-                // 生成第一个数的圆形图形
-                for (let i = 0; i < num1; i++) {
+                // 第一个数的个位数（圆形）
+                for (let i = 0; i < digit1; i++) {
                     const shape = document.createElement('div');
                     shape.className = 'shape-circle';
-                    visualRow1.appendChild(shape);
+                    row1.appendChild(shape);
                 }
 
-                // 生成第二个数的方形图形
-                for (let i = 0; i < num2; i++) {
+                // 从第二个数中取出凑成10的部分（方形）
+                const needFrom2 = 10 - digit1;
+                const takeFrom2 = Math.min(needFrom2, digit2);
+                
+                for (let i = 0; i < takeFrom2; i++) {
                     const shape = document.createElement('div');
                     shape.className = 'shape-square';
-                    visualRow2.appendChild(shape);
+                    row1.appendChild(shape);
+                }
+
+                // 添加说明
+                if (takeFrom2 > 0 && digit1 + takeFrom2 === 10) {
+                    const note1 = document.createElement('span');
+                    note1.style.marginLeft = '10px';
+                    note1.style.color = '#27ae60';
+                    note1.style.fontSize = '0.9em';
+                    note1.style.fontWeight = 'bold';
+                    note1.textContent = `= 10`;
+                    row1.appendChild(note1);
+                }
+
+                visualRows.appendChild(row1);
+
+                // 第二行：显示第二个数剩下的部分（方形）
+                const remaining = digit2 - takeFrom2;
+                if (remaining > 0) {
+                    const row2 = document.createElement('div');
+                    row2.className = 'visual-row';
+                    
+                    const label2 = document.createElement('span');
+                    label2.className = 'visual-row-label';
+                    label2.textContent = '第二行：';
+                    row2.appendChild(label2);
+
+                    for (let i = 0; i < remaining; i++) {
+                        const shape = document.createElement('div');
+                        shape.className = 'shape-square';
+                        row2.appendChild(shape);
+                    }
+
+                    visualRows.appendChild(row2);
+                }
+
+                // 如果有十位数，显示十位数（在下方，用虚线分隔）
+                const tens1 = Math.floor(num1 / 10);
+                const tens2 = Math.floor(num2 / 10);
+                const totalTens = tens1 + tens2;
+                
+                // 如果第一行凑成了10，需要进位，显示进位后的十位数
+                if (digit1 + takeFrom2 === 10 && totalTens >= 0) {
+                    const rowTens = document.createElement('div');
+                    rowTens.className = 'visual-row';
+                    rowTens.style.marginTop = '10px';
+                    rowTens.style.paddingTop = '10px';
+                    rowTens.style.borderTop = '2px dashed #ccc';
+                    
+                    const labelTens = document.createElement('span');
+                    labelTens.className = 'visual-row-label';
+                    labelTens.textContent = '十位：';
+                    rowTens.appendChild(labelTens);
+
+                    // 显示原有的十位数 + 进位1
+                    const finalTens = totalTens + 1;
+                    for (let i = 0; i < finalTens; i++) {
+                        const shape = document.createElement('div');
+                        shape.className = 'shape-circle';
+                        shape.style.opacity = '0.7';
+                        shape.style.border = '2px dashed #ff6b6b';
+                        rowTens.appendChild(shape);
+                    }
+
+                    const noteTens = document.createElement('span');
+                    noteTens.style.marginLeft = '10px';
+                    noteTens.style.color = '#666';
+                    noteTens.style.fontSize = '0.9em';
+                    noteTens.textContent = `= ${finalTens}0`;
+                    rowTens.appendChild(noteTens);
+
+                    visualRows.appendChild(rowTens);
+                } else if (totalTens > 0) {
+                    // 如果没有进位，但原有十位数
+                    const rowTens = document.createElement('div');
+                    rowTens.className = 'visual-row';
+                    rowTens.style.marginTop = '10px';
+                    rowTens.style.paddingTop = '10px';
+                    rowTens.style.borderTop = '2px dashed #ccc';
+                    
+                    const labelTens = document.createElement('span');
+                    labelTens.className = 'visual-row-label';
+                    labelTens.textContent = '十位：';
+                    rowTens.appendChild(labelTens);
+
+                    for (let i = 0; i < totalTens; i++) {
+                        const shape = document.createElement('div');
+                        shape.className = 'shape-circle';
+                        shape.style.opacity = '0.7';
+                        rowTens.appendChild(shape);
+                    }
+
+                    const noteTens = document.createElement('span');
+                    noteTens.style.marginLeft = '10px';
+                    noteTens.style.color = '#666';
+                    noteTens.style.fontSize = '0.9em';
+                    noteTens.textContent = `= ${totalTens}0`;
+                    rowTens.appendChild(noteTens);
+
+                    visualRows.appendChild(rowTens);
                 }
             }
 
@@ -784,6 +898,9 @@
                 this.starsEarned = 0;
                 this.gameActive = true;
                 this.answerHistory = []; // 重置答题历史
+
+                // 保存可视化选项状态
+                this.showVisualization = document.getElementById('visualHelpCheckbox').checked;
 
                 // 打乱题库
                 this.shuffleQuestions();
@@ -1030,21 +1147,6 @@
             game.restartGame();
         }
 
-        // 切换可视化显示
-        function toggleVisualization() {
-            const container = document.getElementById('visualizationContainer');
-            const toggle = document.getElementById('visualToggle');
-            
-            if (container.classList.contains('show')) {
-                container.classList.remove('show');
-                toggle.textContent = '🔢 显示图形帮助';
-                toggle.classList.remove('active');
-            } else {
-                container.classList.add('show');
-                toggle.textContent = '🙈 隐藏图形帮助';
-                toggle.classList.add('active');
-            }
-        }
 
         // 键盘事件监听
         document.addEventListener('keydown', function(event) {
