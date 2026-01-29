@@ -512,29 +512,14 @@
             display: block;
         }
 
-        .visual-label {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-            text-align: left;
-        }
-
         .visual-row {
             display: flex;
             gap: 8px;
             margin-bottom: 15px;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
             min-height: 50px;
             flex-wrap: wrap;
-        }
-
-        .visual-row-label {
-            font-size: 1em;
-            color: #666;
-            margin-right: 10px;
-            min-width: 80px;
         }
 
         .visual-separator {
@@ -619,7 +604,6 @@
             </div>
 
             <div class="visualization-container" id="visualizationContainer">
-                <div class="visual-label">进位计算过程：</div>
                 <div id="visualRows"></div>
             </div>
 
@@ -768,11 +752,6 @@
                 // 第一行：显示第一个数的个位数（圆形）+ 从第二个数中取出的部分（方形），凑成10
                 const row1 = document.createElement('div');
                 row1.className = 'visual-row';
-                
-                const label1 = document.createElement('span');
-                label1.className = 'visual-row-label';
-                label1.textContent = '第一行：';
-                row1.appendChild(label1);
 
                 // 第一个数的个位数（圆形）
                 for (let i = 0; i < digit1; i++) {
@@ -791,17 +770,6 @@
                     row1.appendChild(shape);
                 }
 
-                // 添加说明
-                if (takeFrom2 > 0 && digit1 + takeFrom2 === 10) {
-                    const note1 = document.createElement('span');
-                    note1.style.marginLeft = '10px';
-                    note1.style.color = '#27ae60';
-                    note1.style.fontSize = '0.9em';
-                    note1.style.fontWeight = 'bold';
-                    note1.textContent = `= 10`;
-                    row1.appendChild(note1);
-                }
-
                 visualRows.appendChild(row1);
 
                 // 第二行：显示第二个数剩下的部分（方形）
@@ -809,11 +777,6 @@
                 if (remaining > 0) {
                     const row2 = document.createElement('div');
                     row2.className = 'visual-row';
-                    
-                    const label2 = document.createElement('span');
-                    label2.className = 'visual-row-label';
-                    label2.textContent = '第二行：';
-                    row2.appendChild(label2);
 
                     for (let i = 0; i < remaining; i++) {
                         const shape = document.createElement('div');
@@ -836,11 +799,6 @@
                     rowTens.style.marginTop = '10px';
                     rowTens.style.paddingTop = '10px';
                     rowTens.style.borderTop = '2px dashed #ccc';
-                    
-                    const labelTens = document.createElement('span');
-                    labelTens.className = 'visual-row-label';
-                    labelTens.textContent = '十位：';
-                    rowTens.appendChild(labelTens);
 
                     // 显示原有的十位数 + 进位1
                     const finalTens = totalTens + 1;
@@ -852,13 +810,6 @@
                         rowTens.appendChild(shape);
                     }
 
-                    const noteTens = document.createElement('span');
-                    noteTens.style.marginLeft = '10px';
-                    noteTens.style.color = '#666';
-                    noteTens.style.fontSize = '0.9em';
-                    noteTens.textContent = `= ${finalTens}0`;
-                    rowTens.appendChild(noteTens);
-
                     visualRows.appendChild(rowTens);
                 } else if (totalTens > 0) {
                     // 如果没有进位，但原有十位数
@@ -867,11 +818,6 @@
                     rowTens.style.marginTop = '10px';
                     rowTens.style.paddingTop = '10px';
                     rowTens.style.borderTop = '2px dashed #ccc';
-                    
-                    const labelTens = document.createElement('span');
-                    labelTens.className = 'visual-row-label';
-                    labelTens.textContent = '十位：';
-                    rowTens.appendChild(labelTens);
 
                     for (let i = 0; i < totalTens; i++) {
                         const shape = document.createElement('div');
@@ -879,13 +825,6 @@
                         shape.style.opacity = '0.7';
                         rowTens.appendChild(shape);
                     }
-
-                    const noteTens = document.createElement('span');
-                    noteTens.style.marginLeft = '10px';
-                    noteTens.style.color = '#666';
-                    noteTens.style.fontSize = '0.9em';
-                    noteTens.textContent = `= ${totalTens}0`;
-                    rowTens.appendChild(noteTens);
 
                     visualRows.appendChild(rowTens);
                 }
