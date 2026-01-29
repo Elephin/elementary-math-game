@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数学小游戏集合 - 主页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff6b6b 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 900px;
+            width: 95%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(45deg, #667eea, #764ba2, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.3em;
+            margin-bottom: 40px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-card.level1 {
+            border-color: #667eea;
+        }
+
+        .game-card.level1:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .game-card.level2 {
+            border-color: #00b894;
+        }
+
+        .game-card.level2:hover {
+            background: rgba(0, 184, 148, 0.05);
+        }
+
+        .game-card.level3 {
+            border-color: #ff6b6b;
+        }
+
+        .game-card.level3:hover {
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .game-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .game-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .game-level {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .level1 .game-level {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+        }
+
+        .level2 .game-level {
+            background: linear-gradient(145deg, #00b894, #00a085);
+        }
+
+        .level3 .game-level {
+            background: linear-gradient(145deg, #ff6b6b, #ee5a24);
+        }
+
+        .game-description {
+            color: #666;
+            font-size: 1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .game-features {
+            text-align: left;
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 15px;
+        }
+
+        .game-features li {
+            margin: 5px 0;
+            list-style: none;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .game-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 数学小游戏集合</h1>
+        <p class="subtitle">Interactive Math Games for Elementary Students</p>
+
+        <div class="games-grid">
+            <a href="addition-10.html" class="game-card level1">
+                <div class="game-icon">➕</div>
+                <div class="game-title">10以内加法</div>
+                <div class="game-level">第一关</div>
+                <div class="game-description">
+                    基础加法练习，帮助孩子掌握10以内的加法运算
+                </div>
+                <ul class="game-features">
+                    <li>2-9数字相加</li>
+                    <li>避免简单题目</li>
+                    <li>智能题库系统</li>
+                </ul>
+            </a>
+
+            <a href="subtraction-10.html" class="game-card level2">
+                <div class="game-icon">➖</div>
+                <div class="game-title">10以内减法</div>
+                <div class="game-level">第二关</div>
+                <div class="game-description">
+                    基础减法练习，训练孩子的减法运算能力
+                </div>
+                <ul class="game-features">
+                    <li>避免过于简单题目</li>
+                    <li>循序渐进学习</li>
+                    <li>完整答题记录</li>
+                </ul>
+            </a>
+
+            <a href="addition-20.html" class="game-card level3">
+                <div class="game-icon">🔢</div>
+                <div class="game-title">20以内进位加法</div>
+                <div class="game-level">第三关</div>
+                <div class="game-description">
+                    进位加法练习，挑战更高难度，带可视化帮助
+                </div>
+                <ul class="game-features">
+                    <li>个位数相加>10</li>
+                    <li>图形演示进位</li>
+                    <li>可开关可视化</li>
+                </ul>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>🎮 让数学学习变得更有趣！</p>
+            <p>
+                <a href="https://github.com/Elephin/elementary-math-game" target="_blank">GitHub 仓库</a> | 
+                <a href="README.md" target="_blank">项目说明</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
